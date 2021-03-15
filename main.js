@@ -13,18 +13,18 @@ var timer = setInterval(function () {
     clearInterval(timer);
     $('#numbers').hide();
     $('.timer').hide();
-    // Dopo altri 30sec chiedo all'utente di inserire 5 numeri(uno alla volta)
-    // Controllo quanti e quali numeri sono stati indovinati
+    // Dopo altri 30sec chiedo all'utente di inserire 5 numeri e stampo quanti e quali numeri ha indovinato
     setTimeout (function () {
       var userNumbers = [];
-      var guessedNumbers = score(computerNumbers, userNumbers, 100);
-      if (userNumbers.length == 0) {
+      var correctNumbers = [];
+      var result = matchingNumbers(computerNumbers, userNumbers, correctNumbers, 100);
+      if (correctNumbers.length == 0) {
         $('#result').text("You didn't guess any number.");
-      } else if (userNumbers.length == 1) {
-        $('#result').text("You guessed " + userNumbers.length + " number and that is number " + guessedNumbers);
+      } else if (correctNumbers.length == 1) {
+        $('#result').text("You guessed " + correctNumbers.length + " number and that is number " + result);
       }
       else {
-        $('#result').text("You guessed " + userNumbers.length + " numbers and those are: " + guessedNumbers);
+        $('#result').text("You guessed " + correctNumbers.length + " numbers and those are: " + result);
       }
     }, 30000);
   } else {
@@ -46,16 +46,20 @@ function randomNumber(min,max) {
   }
 }
 
-function score(generatedNumbers, insertedNumbers, max) {
+function matchingNumbers(generatedNumbers, insertedNumbers, correctNumbers, max) {
+  // Chiedo all'utente di inserire 5 numeri(uno alla volta)
   while (insertedNumbers.length < 5) {
     var number = parseInt(prompt("Write one number that you saw before on screen: "));
     if (number >= 1 && number <= max && !isNaN(number)) {
-      if (generatedNumbers.includes(number)) {
-        insertedNumbers.push(number);
-      } else {
-        return insertedNumbers;
-      }
+      insertedNumbers.push(number);
     }
   }
-  return insertedNumbers;
+
+  // Controllo quali numeri sono stati indovinati e li salvo nel array
+  for (var i = 0; i < generatedNumbers.length; i++) {
+    if (generatedNumbers.includes(insertedNumbers[i])) {
+      correctNumbers.push(insertedNumbers[i]);
+    }
+  }
+  return correctNumbers;
 }
